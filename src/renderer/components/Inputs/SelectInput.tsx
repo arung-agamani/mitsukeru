@@ -1,23 +1,28 @@
-import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import React, { useState } from 'react';
+/* eslint-disable react/require-default-props */
+/* eslint-disable react/jsx-props-no-spreading */
+import { MenuItem, Select } from '@mui/material';
+import { Controller } from 'react-hook-form';
 
 interface SelectInputProps {
   label: string;
   id: string;
   items: string[];
+  control?: any;
 }
 
 export default function SelectInput(props: SelectInputProps) {
-  const { label, id, items } = props;
-  const [value, setValue] = useState(items[0] || '');
-  const handleChange = (event: SelectChangeEvent) => {
-    setValue(event.target.value as string);
-  };
+  const { label, id, items, control } = props;
   return (
-    <Select label={label} onChange={handleChange} value={value} id={id}>
-      {items.map((item) => {
-        return <MenuItem value={item}>{item}</MenuItem>;
-      })}
-    </Select>
+    <Controller
+      control={control}
+      name={id}
+      render={({ field: { onChange, value } }) => (
+        <Select label={label} onChange={onChange} value={value} id={id}>
+          {items.map((item) => {
+            return <MenuItem value={item}>{item}</MenuItem>;
+          })}
+        </Select>
+      )}
+    />
   );
 }
