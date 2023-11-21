@@ -1,11 +1,12 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
-import './App.css';
+// import './App.css';
 
-import Button from '@mui/material/Button';
 import BaseLayout from './components/Layout/Base';
 import AboutPage from './pages/About';
 import HomePage from './pages/Home';
+import LostAndFoundPage from './pages/LostAndFound';
+import InventoryPage from './pages/Inventory';
+import CentralInfoPage from './pages/CentralInfo';
 
 export default function App() {
   return (
@@ -14,6 +15,9 @@ export default function App() {
         <Route path="/" element={<BaseLayout />}>
           <Route index element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />
+          <Route path="lnf" element={<LostAndFoundPage />} />
+          <Route path="inventory" element={<InventoryPage />} />
+          <Route path="info" element={<CentralInfoPage />} />
         </Route>
       </Routes>
     </Router>
