@@ -8,38 +8,22 @@ interface NavigationCards {
 }
 
 const NavCards: NavigationCards[] = [
-  {
-    title: 'Lost and Found',
-    description: 'Report lost items and record found items',
-    link: 'lnf',
-  },
-  {
-    title: 'Penitipan Barang',
-    description: 'Manage stored inventory items',
-    link: 'inventory',
-  },
-  {
-    title: 'Central Info',
-    description: 'A collection of central information regarding the event',
-    link: 'info',
-  },
+  // {
+  //   title: 'Lost and Found',
+  //   description: 'Report lost items and record found items',
+  //   link: 'lnf',
+  // },
+  // {
+  //   title: 'Penitipan Barang',
+  //   description: 'Manage stored inventory items',
+  //   link: 'inventory',
+  // },
+  // {
+  //   title: 'Central Info',
+  //   description: 'A collection of central information regarding the event',
+  //   link: 'info',
+  // },
 ];
-
-enum ItemType {
-  Phone,
-  Wallet,
-  CosplayProps,
-  Cash,
-  Documents,
-  Package,
-  Others,
-}
-
-interface ItemData {
-  name: string;
-  type: ItemType;
-  description: string;
-}
 
 export default function HomePage() {
   return (

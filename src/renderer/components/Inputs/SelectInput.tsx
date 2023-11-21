@@ -1,6 +1,6 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/jsx-props-no-spreading */
-import { MenuItem, Select } from '@mui/material';
+import { FormControl, FormHelperText, MenuItem, Select } from '@mui/material';
 import { Controller } from 'react-hook-form';
 
 interface SelectInputProps {
@@ -13,16 +13,20 @@ interface SelectInputProps {
 export default function SelectInput(props: SelectInputProps) {
   const { label, id, items, control } = props;
   return (
-    <Controller
-      control={control}
-      name={id}
-      render={({ field: { onChange, value } }) => (
-        <Select label={label} onChange={onChange} value={value} id={id}>
-          {items.map((item) => {
-            return <MenuItem value={item}>{item}</MenuItem>;
-          })}
-        </Select>
-      )}
-    />
+    <FormControl>
+      <Controller
+        control={control}
+        name={id}
+        defaultValue={items[0]}
+        render={({ field: { onChange, value } }) => (
+          <Select onChange={onChange} value={value} id={id} displayEmpty>
+            {items.map((item) => {
+              return <MenuItem value={item}>{item}</MenuItem>;
+            })}
+          </Select>
+        )}
+      />
+      <FormHelperText>{label}</FormHelperText>
+    </FormControl>
   );
 }

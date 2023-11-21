@@ -11,9 +11,9 @@ import {
 } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import Webcam from 'react-webcam';
 import TextFieldInput from '../components/Inputs/TextFieldInput';
 import SelectInput from '../components/Inputs/SelectInput';
-import Webcam from 'react-webcam';
 
 interface TabPanelProps {
   children?: React.ReactNode;

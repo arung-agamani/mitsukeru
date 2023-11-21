@@ -31,6 +31,26 @@ const DrawerIcons: DrawerItems[] = [
     icon: <HomeIcon />,
   },
   {
+    text: 'Search Lost Item',
+    target: 'lnf-search',
+    icon: <HomeIcon />,
+  },
+  {
+    text: 'Add Lost Item',
+    target: 'lnf-add',
+    icon: <HomeIcon />,
+  },
+  {
+    text: 'Search Found Item',
+    target: 'lnf',
+    icon: <HomeIcon />,
+  },
+  {
+    text: 'Add Found Item',
+    target: 'lnf',
+    icon: <HomeIcon />,
+  },
+  {
     text: 'About',
     target: 'about',
     icon: <InfoIcon />,
@@ -59,7 +79,11 @@ export default function BaseLayout() {
         <List>
           {DrawerIcons.map((item) => {
             return (
-              <Link to={item.target} key={item.target}>
+              <Link
+                to={item.target}
+                key={item.target}
+                style={{ textDecoration: 'none' }}
+              >
                 <ListItem>
                   <ListItemButton>
                     <ListItemIcon>{item.icon}</ListItemIcon>
