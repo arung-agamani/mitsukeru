@@ -12,8 +12,10 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { initDb } from './db';
 
 class AppUpdater {
   constructor() {
@@ -42,6 +44,8 @@ const isDebug =
 if (isDebug) {
   require('electron-debug')();
 }
+
+// eslint-disable-next-line import/prefer-default-export
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
@@ -126,7 +130,8 @@ app.on('window-all-closed', () => {
 
 app
   .whenReady()
-  .then(() => {
+  .then(async () => {
+    await initDb();
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
