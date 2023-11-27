@@ -16,6 +16,10 @@
   },
   "dependencies": {
     "@mikro-orm/core": "^5.9.4",
-    "@mikro-orm/sqlite": "^5.9.4"
+    "@mikro-orm/sqlite": "^5.9.4",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.7"
   }
 }
