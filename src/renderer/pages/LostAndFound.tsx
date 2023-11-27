@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import Webcam from 'react-webcam';
 import TextFieldInput from '../components/Inputs/TextFieldInput';
 import SelectInput from '../components/Inputs/SelectInput';
@@ -47,7 +48,8 @@ const ItemType = [
   'Others',
 ];
 
-interface ItemData {
+export interface ItemData {
+  id?: string;
   name: string;
   type: string;
   description: string;
@@ -73,6 +75,18 @@ export default function LostAndFoundPage() {
 
   const submit = (data: any) => {
     setItemData(data);
+    toast.info('Submit button clicked');
+  };
+
+  const saveData = () => {
+    console.log('Saving data...');
+    window.electron.ipcRenderer.sendMessage('ipc-example', ['Saving data...']);
+    const payload = {
+      ...itemData,
+      imageData,
+    };
+
+    window.electron.db.addItem('lost', payload);
   };
 
   return (
@@ -122,7 +136,7 @@ export default function LostAndFoundPage() {
                 </Button>
                 <Webcam
                   audio={false}
-                  screenshotFormat="image/jpeg"
+                  screenshotFormat="image/png"
                   videoConstraints={{
                     width: 640,
                     height: 480,
@@ -174,6 +188,9 @@ export default function LostAndFoundPage() {
               </Grid>
               <Typography>Foto terkait barang</Typography>
               {imageData && <img src={imageData} alt="Item" />}
+              <Button variant="contained" onClick={() => saveData()}>
+                Save Data
+              </Button>
             </Box>
           </Grid>
         </Grid>

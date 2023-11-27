@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client';
+import { toast } from 'react-toastify';
 import App from './App';
 
 const container = document.getElementById('root') as HTMLElement;
@@ -12,5 +13,6 @@ window.electron.ipcRenderer.once('ipc-example', (arg) => {
 });
 window.electron.db.on('lost', (arg) => {
   console.log(arg);
+  toast.info(`Message from backend: ${arg}`);
 });
 window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);

@@ -1,5 +1,7 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 // import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 import BaseLayout from './components/Layout/Base';
 import AboutPage from './pages/About';
@@ -12,6 +14,7 @@ import SearchPage from './pages/Lost/Search';
 export default function App() {
   return (
     <Router>
+      <ToastContainer position="top-center" />
       <Routes>
         <Route path="/" element={<BaseLayout />}>
           <Route index element={<HomePage />} />

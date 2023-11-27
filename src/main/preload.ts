@@ -29,6 +29,12 @@ const electronHandler = {
       // ipcRenderer.send(type, values);
       ipcRenderer.send('db', type, values);
     },
+    async listItem(type: ItemType) {
+      return ipcRenderer.invoke('db-search', type);
+    },
+    async getImage(type: ItemType, id: string) {
+      return ipcRenderer.invoke('image-get', type, id);
+    },
     on(channel: ItemType, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
         func(...args);
