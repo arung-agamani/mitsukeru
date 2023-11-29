@@ -3,6 +3,7 @@ import { EntityManager } from '@mikro-orm/sqlite';
 import { app, ipcMain } from 'electron';
 import fs from 'fs-extra';
 import path from 'path';
+import { editItem, getItem } from './crud';
 import { BaseEntity } from './Entities/BaseEntity';
 import Item from './Entities/Item';
 import LostItem from './Entities/LostItem';
@@ -72,7 +73,14 @@ ipcMain.handle('db-search', async (event, type: ItemType) => {
       LostItem,
       {},
       {
-        fields: ['name', 'type', 'description', 'location'],
+        fields: [
+          'name',
+          'type',
+          'description',
+          'location',
+          'createdAt',
+          'updatedAt',
+        ],
       },
     );
     return lostItems;
@@ -89,3 +97,11 @@ ipcMain.handle('image-get', async (event, type: ItemType, id: string) => {
 
   return null;
 });
+
+ipcMain.handle('db-edit', async (event, type, id, values) =>
+  editItem(event, DI.em, type, id, values),
+);
+
+ipcMain.handle('db-get', async (event, type, id) =>
+  getItem(event, DI.em, type, id),
+);

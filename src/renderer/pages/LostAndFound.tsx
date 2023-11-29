@@ -54,7 +54,21 @@ export interface ItemData {
   type: string;
   description: string;
   location: string;
+  status: 'reported' | 'claimed';
+  createdAt: Date;
+  updatedAt: Date;
 }
+
+export const emptyItemData: ItemData = {
+  id: '',
+  name: '',
+  type: '',
+  description: '',
+  location: '',
+  status: 'reported',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
 
 export default function LostAndFoundPage() {
   const [value, setValue] = useState(0);

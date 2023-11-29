@@ -1,6 +1,8 @@
 import { Entity, Property } from '@mikro-orm/core';
 import Item from './Item';
 
+export type LostItemStatus = 'reported' | 'claimed';
+
 @Entity()
 export default class LostItem extends Item {
   constructor(
@@ -17,8 +19,12 @@ export default class LostItem extends Item {
     const date = new Date();
     this.createdAt = date;
     this.updatedAt = date;
+    this.status = 'reported';
   }
 
   @Property()
   location!: string;
+
+  @Property()
+  status!: LostItemStatus;
 }

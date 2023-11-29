@@ -25,9 +25,14 @@ const electronHandler = {
     },
   },
   db: {
+    async getItem(type: ItemType, id: string) {
+      return ipcRenderer.invoke('db-get', type, id);
+    },
     async addItem(type: ItemType, values: any) {
-      // ipcRenderer.send(type, values);
       ipcRenderer.send('db', type, values);
+    },
+    async editItem(type: ItemType, id: string, values: any) {
+      return ipcRenderer.invoke('db-edit', type, id, values);
     },
     async listItem(type: ItemType) {
       return ipcRenderer.invoke('db-search', type);
