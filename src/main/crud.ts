@@ -3,6 +3,7 @@ import { wrap } from '@mikro-orm/core';
 import { IpcMainInvokeEvent } from 'electron';
 import { EntityManager } from '@mikro-orm/sqlite';
 import LostItem, { LostItemStatus } from './Entities/LostItem';
+import FoundItem, { FoundItemStatus } from './Entities/FoundItem';
 import { ItemType } from './preload';
 
 interface BaseItemAttributes {
@@ -15,6 +16,11 @@ interface LostItemUpdate extends BaseItemAttributes {
   status: LostItemStatus;
 }
 
+interface FoundItemUpdate extends BaseItemAttributes {
+  location: string;
+  status: FoundItemStatus;
+}
+
 export async function getItem(
   event: IpcMainInvokeEvent,
   _em: EntityManager,
@@ -24,6 +30,9 @@ export async function getItem(
   let entity = null;
   if (type === 'lost') {
     entity = LostItem;
+  }
+  if (type === 'found') {
+    entity = FoundItem;
   }
 
   if (!entity) return 0;
@@ -50,6 +59,10 @@ export async function editItem(
   if (type === 'lost') {
     entity = LostItem;
     val = values as LostItemUpdate;
+  }
+  if (type === 'found') {
+    entity = FoundItem;
+    val = values as FoundItemUpdate;
   }
 
   if (!entity) return 0;
