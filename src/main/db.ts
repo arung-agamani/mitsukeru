@@ -7,6 +7,7 @@ import { editItem, getItem } from './crud';
 import { BaseEntity } from './Entities/BaseEntity';
 import Item from './Entities/Item';
 import LostItem from './Entities/LostItem';
+import FoundItem from './Entities/FoundItem';
 
 const USER_DATA_PATH = path.resolve(app.getPath('documents'), app.getName());
 
@@ -19,7 +20,7 @@ export const initDb = async () => {
     type: 'sqlite',
     dbName: 'test.db',
     debug: true,
-    entities: [BaseEntity, Item, LostItem],
+    entities: [BaseEntity, Item, LostItem, FoundItem],
   });
   const em = orm.em as EntityManager;
   DI.orm = orm;
@@ -36,9 +37,17 @@ interface LostItemData {
   imageData: string;
 }
 
+interface FoundItemData {
+  name: string;
+  type: string;
+  description: string;
+  location: string;
+  imageData: string;
+}
+
 type ItemType = 'lost' | 'found' | 'inventory';
 
-ipcMain.on('db', async (event, type, value) => {
+ipcMain.on('db', async (event, type: ItemType, value) => {
   if (type === 'lost') {
     const {
       name,
@@ -63,6 +72,29 @@ ipcMain.on('db', async (event, type, value) => {
     );
 
     event.reply('lost', 'Item successfully added to lost item bin');
+  } else if (type === 'found') {
+    const {
+      name,
+      type: itemType,
+      description,
+      location,
+      imageData,
+    } = value as FoundItemData;
+    const foundItem = new FoundItem(name, itemType, description, location);
+    const em = DI.em.fork();
+    await em.persistAndFlush(foundItem);
+    const imageb64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
+    const buf = Buffer.from(imageb64Data, 'base64');
+    fs.writeFile(
+      path.resolve(
+        app.getPath('documents'),
+        app.getName(),
+        `${foundItem.id}.png`,
+      ),
+      buf,
+    );
+
+    event.reply('found', 'Item successfully added to found item bin');
   }
 });
 
@@ -84,6 +116,24 @@ ipcMain.handle('db-search', async (event, type: ItemType) => {
       },
     );
     return lostItems;
+  }
+  if (type === 'found') {
+    const em = DI.em.fork();
+    const foundItems = await em.find(
+      FoundItem,
+      {},
+      {
+        fields: [
+          'name',
+          'type',
+          'description',
+          'location',
+          'createdAt',
+          'updatedAt',
+        ],
+      },
+    );
+    return foundItems;
   }
   return [];
 });

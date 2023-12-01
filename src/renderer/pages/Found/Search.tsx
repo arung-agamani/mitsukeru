@@ -16,7 +16,7 @@ import { Link } from 'react-router-dom';
 import { ItemData } from '../LostAndFound';
 import ItemDisplay from '../../components/ItemDisplay';
 
-export default function SearchPage() {
+export default function FoundSearchPage() {
   const [items, setItems] = useState<ItemData[]>([]);
 
   const columns = useMemo<MRT_ColumnDef<ItemData>[]>(
@@ -55,7 +55,7 @@ export default function SearchPage() {
     editDisplayMode: 'modal',
     onEditingRowSave: async ({ table: _table, values, row }) => {
       const res = await window.electron.db.editItem(
-        'lost',
+        'found',
         row.original.id!,
         values,
       );
@@ -100,13 +100,13 @@ export default function SearchPage() {
   });
   useEffect(() => {
     (async () => {
-      const lostItems = await window.electron.db.listItem('lost');
+      const lostItems = await window.electron.db.listItem('found');
       setItems(lostItems);
     })();
   }, []);
   return (
     <Box padding="1rem">
-      <Typography variant="h4">Lost Items List</Typography>
+      <Typography variant="h4">Found Items List</Typography>
       <MaterialReactTable table={tableSetting} />
     </Box>
   );

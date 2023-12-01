@@ -11,6 +11,8 @@ import CentralInfoPage from './pages/CentralInfo';
 import SearchPage from './pages/Lost/Search';
 import LostDetailPage from './pages/Lost/Detail';
 import AddLostItemPage from './pages/Lost/Add';
+import FoundSearchPage from './pages/Found/Search';
+import AddFoundItemPage from './pages/Found/Add';
 
 export default function App() {
   return (
@@ -20,10 +22,11 @@ export default function App() {
         <Route path="/" element={<BaseLayout />}>
           <Route index element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />
-          <Route path="lnf-search" element={<SearchPage />} />
-          <Route path="lnf-add" element={<AddLostItemPage />} />
+          <Route path="lnf-lost-search" element={<SearchPage />} />
+          <Route path="lnf-lost-add" element={<AddLostItemPage />} />
           <Route path="lnf-lost-detail" element={<LostDetailPage />} />
-
+          <Route path="lnf-found-search" element={<FoundSearchPage />} />
+          <Route path="lnf-found-add" element={<AddFoundItemPage />} />
           <Route path="inventory" element={<InventoryPage />} />
           <Route path="info" element={<CentralInfoPage />} />
         </Route>

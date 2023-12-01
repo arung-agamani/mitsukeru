@@ -32,22 +32,22 @@ const DrawerIcons: DrawerItems[] = [
   },
   {
     text: 'Search Lost Item',
-    target: 'lnf-search',
+    target: 'lnf-lost-search',
     icon: <HomeIcon />,
   },
   {
     text: 'Add Lost Item',
-    target: 'lnf-add',
+    target: 'lnf-lost-add',
     icon: <HomeIcon />,
   },
   {
     text: 'Search Found Item',
-    target: 'lnf',
+    target: 'lnf-found-search',
     icon: <HomeIcon />,
   },
   {
     text: 'Add Found Item',
-    target: 'lnf',
+    target: 'lnf-found-add',
     icon: <HomeIcon />,
   },
   {
