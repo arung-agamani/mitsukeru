@@ -43,7 +43,7 @@ const AddFoundItemPage = () => {
     window.electron.db.addItem('found', payload);
   };
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} padding="1rem 1rem">
       <Grid item xs={6}>
         <Typography variant="h4">Tambah Item</Typography>
         <form onSubmit={handleSubmit(submit)}>

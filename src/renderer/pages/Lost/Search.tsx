@@ -38,6 +38,7 @@ export default function SearchPage() {
         header: 'Location',
       },
       {
+        id: 'status',
         accessorFn: (row) => row.status?.toUpperCase() || 'UNKNOWN',
         header: 'Status',
         editVariant: 'select',
