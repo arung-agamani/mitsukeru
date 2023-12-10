@@ -66,13 +66,13 @@ export async function editItem(
   }
 
   if (!entity) return 0;
-
   try {
     const em = _em.fork();
     const item = await em.findOneOrFail(entity, { id });
     wrap(item).assign(
       {
         ...val,
+        status: val?.status,
         updatedAt: new Date(),
       },
       { em },

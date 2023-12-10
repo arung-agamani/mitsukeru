@@ -1,5 +1,7 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 // import './App.css';
+// import 'tailwindcss/tailwind.css';
+import './base.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 
@@ -13,6 +15,7 @@ import LostDetailPage from './pages/Lost/Detail';
 import AddLostItemPage from './pages/Lost/Add';
 import FoundSearchPage from './pages/Found/Search';
 import AddFoundItemPage from './pages/Found/Add';
+import DataManagementPage from './pages/Management/data';
 
 export default function App() {
   return (
@@ -29,6 +32,7 @@ export default function App() {
           <Route path="lnf-found-add" element={<AddFoundItemPage />} />
           <Route path="inventory" element={<InventoryPage />} />
           <Route path="info" element={<CentralInfoPage />} />
+          <Route path="data-management" element={<DataManagementPage />} />
         </Route>
       </Routes>
     </Router>

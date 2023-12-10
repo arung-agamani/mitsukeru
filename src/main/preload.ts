@@ -40,6 +40,9 @@ const electronHandler = {
     async getImage(type: ItemType, id: string) {
       return ipcRenderer.invoke('image-get', type, id);
     },
+    async export() {
+      return ipcRenderer.invoke('export');
+    },
     on(channel: ItemType, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
         func(...args);

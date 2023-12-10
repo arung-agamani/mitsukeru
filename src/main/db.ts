@@ -3,11 +3,14 @@ import { EntityManager } from '@mikro-orm/sqlite';
 import { app, ipcMain } from 'electron';
 import fs from 'fs-extra';
 import path from 'path';
+import xlsx from 'xlsx';
 import { editItem, getItem } from './crud';
 import { BaseEntity } from './Entities/BaseEntity';
 import Item from './Entities/Item';
 import LostItem from './Entities/LostItem';
 import FoundItem from './Entities/FoundItem';
+
+xlsx.set_fs(fs);
 
 const USER_DATA_PATH = path.resolve(app.getPath('documents'), app.getName());
 
@@ -112,6 +115,7 @@ ipcMain.handle('db-search', async (event, type: ItemType) => {
           'location',
           'createdAt',
           'updatedAt',
+          'status',
         ],
       },
     );
@@ -130,6 +134,7 @@ ipcMain.handle('db-search', async (event, type: ItemType) => {
           'location',
           'createdAt',
           'updatedAt',
+          'status',
         ],
       },
     );
@@ -155,3 +160,14 @@ ipcMain.handle('db-edit', async (event, type, id, values) =>
 ipcMain.handle('db-get', async (event, type, id) =>
   getItem(event, DI.em, type, id),
 );
+
+ipcMain.handle('export', async (event) => {
+  const em = DI.em.fork();
+  const allLostItems = await em.find(LostItem, {});
+  const allFoundItems = await em.find(FoundItem, {});
+
+  return {
+    lost: allLostItems,
+    found: allFoundItems,
+  };
+});
