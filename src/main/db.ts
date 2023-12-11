@@ -4,11 +4,13 @@ import { app, ipcMain } from 'electron';
 import fs from 'fs-extra';
 import path from 'path';
 import xlsx from 'xlsx';
+import axios from 'axios';
 import { editItem, getItem } from './crud';
 import { BaseEntity } from './Entities/BaseEntity';
 import Item from './Entities/Item';
 import LostItem from './Entities/LostItem';
 import FoundItem from './Entities/FoundItem';
+import ConfigEntity from './Entities/Config';
 
 xlsx.set_fs(fs);
 
@@ -23,12 +25,14 @@ export const initDb = async () => {
     type: 'sqlite',
     dbName: 'test.db',
     debug: true,
-    entities: [BaseEntity, Item, LostItem, FoundItem],
+    entities: [BaseEntity, Item, LostItem, FoundItem, ConfigEntity],
   });
   const em = orm.em as EntityManager;
   DI.orm = orm;
   DI.em = em;
   // await orm.schema.refreshDatabase();
+  // await orm.schema.execute('DROP TABLE `config_entity`');
+  await orm.schema.updateSchema();
   fs.ensureDirSync(path.resolve(app.getPath('documents'), app.getName()));
 };
 
@@ -161,13 +165,98 @@ ipcMain.handle('db-get', async (event, type, id) =>
   getItem(event, DI.em, type, id),
 );
 
-ipcMain.handle('export', async (event) => {
+ipcMain.handle('export', async () => {
   const em = DI.em.fork();
   const allLostItems = await em.find(LostItem, {});
   const allFoundItems = await em.find(FoundItem, {});
+  // ensure export file exists
+  const docsPath = path.resolve(USER_DATA_PATH, 'data.xlsx');
+  fs.ensureFileSync(docsPath);
 
+  // init workbook
+  const wb = xlsx.utils.book_new();
+  const lostWs = xlsx.utils.sheet_new();
+  const foundWs = xlsx.utils.sheet_new();
+  // safe workbook
+  xlsx.utils.book_append_sheet(wb, lostWs, 'Lost Items');
+  xlsx.utils.book_append_sheet(wb, foundWs, 'Found Items');
+  xlsx.utils.sheet_add_json(lostWs, allLostItems);
+  xlsx.utils.sheet_add_json(foundWs, allFoundItems);
+  xlsx.writeFileXLSX(wb, docsPath);
+
+  const promiseArr = [];
+  const returnData = {} as {
+    remoteSuccess: boolean;
+    lost: LostItem[];
+    found: FoundItem[];
+  };
+  promiseArr.push(
+    axios.post('http://localhost:3000/items/data', {
+      type: 'lostItems',
+      data: allLostItems,
+    }),
+    axios.post('http://localhost:3000/items/data', {
+      type: 'foundItems',
+      data: allFoundItems,
+    }),
+  );
+  try {
+    await Promise.all(promiseArr);
+    // res.forEach((r) => console.log(r));
+    returnData.remoteSuccess = true;
+  } catch (error) {
+    console.error(`Error happened when syncing with remote`);
+    console.error(error);
+    returnData.remoteSuccess = false;
+  }
+
+  await em.upsert(ConfigEntity, {
+    key: 'EXPORT_DATA_PATH',
+    value: docsPath,
+  });
+
+  returnData.lost = allLostItems;
+  returnData.found = allFoundItems;
+  return returnData;
+});
+
+ipcMain.handle('import', async () => {
+  const promiseArr = [];
+  promiseArr.push(
+    axios.get('http://localhost:3000/items/data', {
+      params: {
+        type: 'lostItems',
+      },
+    }),
+    axios.get('http://localhost:3000/items/data', {
+      params: {
+        type: 'foundItems',
+      },
+    }),
+  );
+  try {
+    const [{ data: lostItemData }, { data: foundItemData }] =
+      await Promise.all(promiseArr);
+    const em = DI.em.fork();
+    await em.upsertMany(LostItem, lostItemData);
+    await em.upsertMany(FoundItem, foundItemData);
+    return {
+      success: true,
+      message: 'Synced',
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: 'Something went wrong',
+    };
+  }
+});
+
+ipcMain.handle('config-get', async () => {
+  const em = DI.em.fork();
+  const allConfigs = await em.find(ConfigEntity, {});
   return {
-    lost: allLostItems,
-    found: allFoundItems,
+    configs: allConfigs,
   };
 });

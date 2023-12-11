@@ -43,6 +43,12 @@ const electronHandler = {
     async export() {
       return ipcRenderer.invoke('export');
     },
+    async import() {
+      return ipcRenderer.invoke('import');
+    },
+    async getConfig() {
+      return ipcRenderer.invoke('config-get');
+    },
     on(channel: ItemType, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
         func(...args);

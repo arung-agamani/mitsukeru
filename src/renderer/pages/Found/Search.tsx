@@ -39,7 +39,8 @@ export default function FoundSearchPage() {
       },
       {
         id: 'status',
-        accessorFn: (row) => row.status?.toUpperCase() || 'UNKNOWN',
+        accessorFn: (row) => row.status || 'UNKNOWN',
+        Cell: ({ cell }) => cell.getValue<string>().toUpperCase(),
         header: 'Status',
         editVariant: 'select',
         editSelectOptions: ['reported', 'claimed'],
