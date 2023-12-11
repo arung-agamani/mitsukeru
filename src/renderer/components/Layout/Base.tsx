@@ -51,6 +51,11 @@ const DrawerIcons: DrawerItems[] = [
     icon: <HomeIcon />,
   },
   {
+    text: 'Add Deposit Item',
+    target: 'deposit-add',
+    icon: <HomeIcon />,
+  },
+  {
     text: 'Data Management',
     target: 'data-management',
     icon: <InfoIcon />,

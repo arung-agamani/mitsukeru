@@ -27,4 +27,10 @@ export default class LostItem extends Item {
 
   @Property()
   status!: LostItemStatus;
+
+  @Property()
+  reporterName: string = '';
+
+  @Property()
+  reporterContact: string = '';
 }

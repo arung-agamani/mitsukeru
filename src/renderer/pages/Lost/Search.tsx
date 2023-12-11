@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 
 import { ItemData } from '../LostAndFound';
 import ItemDisplay from '../../components/ItemDisplay';
+import { ItemType } from './types';
 
 export default function SearchPage() {
   const [items, setItems] = useState<ItemData[]>([]);
@@ -28,6 +29,8 @@ export default function SearchPage() {
       {
         accessorKey: 'type',
         header: 'Type',
+        editVariant: 'select',
+        editSelectOptions: ItemType,
       },
       {
         accessorKey: 'description',
@@ -44,6 +47,7 @@ export default function SearchPage() {
         header: 'Status',
         editVariant: 'select',
         editSelectOptions: ['reported', 'claimed'],
+        filterVariant: 'select',
       },
     ],
     [],
@@ -54,6 +58,7 @@ export default function SearchPage() {
     data: items,
     enableGlobalFilter: true,
     enableEditing: true,
+    enableFacetedValues: true,
     editDisplayMode: 'modal',
     onEditingRowSave: async ({ table: _table, values, row }) => {
       const res = await window.electron.db.editItem(

@@ -42,8 +42,6 @@ const DataManagementPage = () => {
         <Button variant="contained" onClick={() => handleExport()}>
           Export
         </Button>
-        <Typography variant="h4">Sync Data</Typography>
-        <Button variant="contained">Sync</Button>
         <Typography variant="h4">Generate Report</Typography>
         <Button variant="contained">Generate</Button>
       </div>

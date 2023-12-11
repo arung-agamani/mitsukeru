@@ -1,37 +1,37 @@
 import { Grid, Typography, Box, Button } from '@mui/material';
-import React, { useCallback, useRef, useState } from 'react';
-import Webcam from 'react-webcam';
+import React, { useState } from 'react';
+// import Webcam from 'react-webcam';
 import { useForm } from 'react-hook-form';
-// import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import TextFieldInput from '../../components/Inputs/TextFieldInput';
 import SelectInput from '../../components/Inputs/SelectInput';
-import { ItemType, LostItemData } from './types';
+import { DepositItemData, ItemType } from './types';
 
-const AddLostItemPage = () => {
-  const [itemData, setItemData] = useState<LostItemData | null>(null);
-  const [imageData, setImageData] = useState<string>('');
+const AddDepositItemPage = () => {
+  const [itemData, setItemData] = useState<DepositItemData | null>(null);
+  // const [imageData, setImageData] = useState<string>('');
   const { handleSubmit, control } = useForm();
-  const webcamRef = useRef<Webcam | null>(null);
+  // const webcamRef = useRef<Webcam | null>(null);
 
-  const capture = useCallback(() => {
-    if (!webcamRef.current) return;
-    const imageSrc = webcamRef.current.getScreenshot();
-    if (imageSrc) setImageData(imageSrc);
-  }, [webcamRef]);
-
-  const submit = (data: any) => {
-    setItemData(data);
-    // toast.info('Submit button clicked');
-  };
-
+  // const capture = useCallback(() => {
+  //   if (!webcamRef.current) return;
+  //   const imageSrc = webcamRef.current.getScreenshot();
+  //   if (imageSrc) setImageData(imageSrc);
+  // }, [webcamRef]);
   const saveData = () => {
     const payload = {
       ...itemData,
-      imageData,
     };
 
-    window.electron.db.addItem('lost', payload);
+    window.electron.db.addItem('deposit', payload);
   };
+
+  const submit = (data: any) => {
+    setItemData(data);
+    toast.info('Submit button clicked');
+    saveData();
+  };
+  // TODO : Fix the form fields
   return (
     <Grid container spacing={2} padding="1rem 1rem">
       <Grid item xs={6}>
@@ -51,24 +51,14 @@ const AddLostItemPage = () => {
               control={control}
             />
             <TextFieldInput
-              label="Lost Location"
+              label="Found Location"
               id="location"
               control={control}
             />
-            <TextFieldInput
-              label="Reporter's Name"
-              id="reporterName"
-              control={control}
-            />
-            <TextFieldInput
-              label="Reporter's Contact"
-              id="reporterContact"
-              control={control}
-            />
-            <Button variant="contained" type="submit" onClick={capture}>
-              Take Photo
+            <Button variant="contained" type="submit">
+              Submit
             </Button>
-            <Webcam
+            {/* <Webcam
               audio={false}
               screenshotFormat="image/png"
               videoConstraints={{
@@ -77,11 +67,11 @@ const AddLostItemPage = () => {
                 facingMode: 'user',
               }}
               ref={webcamRef}
-            />
+            /> */}
           </Box>
         </form>
       </Grid>
-      <Grid item xs={6}>
+      {/* <Grid item xs={6}>
         <Typography variant="h4">Preview Item</Typography>
         <Box display="flex" flexDirection="column" gap={2}>
           <Grid container>
@@ -110,39 +100,21 @@ const AddLostItemPage = () => {
           </Grid>
           <Grid container>
             <Grid item xs={6}>
-              <Typography variant="h5">Estimated Location of Lost</Typography>
+              <Typography variant="h5">Found item location</Typography>
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1">{itemData?.location}</Typography>
             </Grid>
           </Grid>
-          <Grid container>
-            <Grid item xs={6}>
-              <Typography variant="h5">Reporter&apos;s Name</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.reporterName}</Typography>
-            </Grid>
-          </Grid>
-          <Grid container>
-            <Grid item xs={6}>
-              <Typography variant="h5">Reporter&apos;s Contact</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1">
-                {itemData?.reporterContact}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Typography>Item Picture (if any)</Typography>
+          <Typography>Item Picture</Typography>
           {imageData && <img src={imageData} alt="Item" />}
           <Button variant="contained" onClick={() => saveData()}>
             Save Data
           </Button>
         </Box>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };
 
-export default AddLostItemPage;
+export default AddDepositItemPage;

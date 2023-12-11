@@ -11,6 +11,7 @@ import Item from './Entities/Item';
 import LostItem from './Entities/LostItem';
 import FoundItem from './Entities/FoundItem';
 import ConfigEntity from './Entities/Config';
+import DepositItem from './Entities/DepositItem';
 
 xlsx.set_fs(fs);
 
@@ -25,7 +26,14 @@ export const initDb = async () => {
     type: 'sqlite',
     dbName: 'test.db',
     debug: true,
-    entities: [BaseEntity, Item, LostItem, FoundItem, ConfigEntity],
+    entities: [
+      BaseEntity,
+      Item,
+      LostItem,
+      FoundItem,
+      ConfigEntity,
+      DepositItem,
+    ],
   });
   const em = orm.em as EntityManager;
   DI.orm = orm;
@@ -54,6 +62,27 @@ interface FoundItemData {
 
 type ItemType = 'lost' | 'found' | 'inventory';
 
+async function uploadImage(id: string, imageData: Buffer) {
+  const formData = new FormData();
+  const imageBlob = new Blob([imageData]);
+  formData.append('id', id);
+  formData.append('image', imageBlob);
+
+  try {
+    await axios.post('http://localhost:3000/items/image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log(`Image with id ${id} has been uploaded to remote server`);
+    return true;
+  } catch (error) {
+    console.error(error);
+    console.log(`Image with id ${id} failed to be uploaded to remote server`);
+    return false;
+  }
+}
+
 ipcMain.on('db', async (event, type: ItemType, value) => {
   if (type === 'lost') {
     const {
@@ -77,7 +106,7 @@ ipcMain.on('db', async (event, type: ItemType, value) => {
       ),
       buf,
     );
-
+    await uploadImage(lostItem.id, buf);
     event.reply('lost', 'Item successfully added to lost item bin');
   } else if (type === 'found') {
     const {
@@ -100,7 +129,7 @@ ipcMain.on('db', async (event, type: ItemType, value) => {
       ),
       buf,
     );
-
+    await uploadImage(foundItem.id, buf);
     event.reply('found', 'Item successfully added to found item bin');
   }
 });
@@ -153,7 +182,24 @@ ipcMain.handle('image-get', async (event, type: ItemType, id: string) => {
     const data = fs.readFileSync(filePath);
     return data.toString('base64');
   }
-
+  // check remote
+  try {
+    const { data } = await axios.get('http://localhost:3000/items/image', {
+      params: {
+        id,
+      },
+      responseType: 'arraybuffer',
+    });
+    const buf = Buffer.from(data, 'binary');
+    fs.writeFile(
+      path.resolve(app.getPath('documents'), app.getName(), `${id}.png`),
+      buf,
+    );
+    return buf.toString('base64');
+  } catch (error) {
+    console.error(error);
+    console.error(`Error when retrieving data from remote`);
+  }
   return null;
 });
 
@@ -259,4 +305,17 @@ ipcMain.handle('config-get', async () => {
   return {
     configs: allConfigs,
   };
+});
+
+ipcMain.handle('config-set', async (event, key, value) => {
+  const em = DI.em.fork();
+  try {
+    const upsert = await em.upsert(ConfigEntity, {
+      key,
+      value,
+    });
+    return upsert;
+  } catch (error) {
+    return null;
+  }
 });

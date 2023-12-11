@@ -4,7 +4,7 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels = 'ipc-example';
 
-export type ItemType = 'lost' | 'found' | 'inventory';
+export type ItemType = 'lost' | 'found' | 'deposit';
 
 const electronHandler = {
   ipcRenderer: {

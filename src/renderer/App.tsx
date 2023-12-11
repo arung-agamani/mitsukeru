@@ -16,6 +16,7 @@ import AddLostItemPage from './pages/Lost/Add';
 import FoundSearchPage from './pages/Found/Search';
 import AddFoundItemPage from './pages/Found/Add';
 import DataManagementPage from './pages/Management/data';
+import AddDepositItemPage from './pages/Deposit/Add';
 
 export default function App() {
   return (
@@ -30,7 +31,7 @@ export default function App() {
           <Route path="lnf-lost-detail" element={<LostDetailPage />} />
           <Route path="lnf-found-search" element={<FoundSearchPage />} />
           <Route path="lnf-found-add" element={<AddFoundItemPage />} />
-          <Route path="inventory" element={<InventoryPage />} />
+          <Route path="deposit-add" element={<AddDepositItemPage />} />
           <Route path="info" element={<CentralInfoPage />} />
           <Route path="data-management" element={<DataManagementPage />} />
         </Route>

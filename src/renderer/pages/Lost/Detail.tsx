@@ -22,7 +22,7 @@ const LostDetailPage: React.FC = () => {
   return (
     <Box display="flex" flexDirection="column">
       <Link
-        to="/lnf-search"
+        to="/lnf-lost-search"
         style={{ textDecoration: 'none', paddingLeft: '2rem' }}
       >
         <Typography variant="h3">Go back to search page</Typography>

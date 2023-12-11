@@ -5,20 +5,10 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import TextFieldInput from '../../components/Inputs/TextFieldInput';
 import SelectInput from '../../components/Inputs/SelectInput';
-import { ItemData } from '../LostAndFound';
-
-const ItemType = [
-  'Phone',
-  'Wallet',
-  'CosplayProps',
-  'Cash',
-  'Documents',
-  'Package',
-  'Others',
-];
+import { FoundItemData, ItemType } from './types';
 
 const AddFoundItemPage = () => {
-  const [itemData, setItemData] = useState<ItemData | null>(null);
+  const [itemData, setItemData] = useState<FoundItemData | null>(null);
   const [imageData, setImageData] = useState<string>('');
   const { handleSubmit, control } = useForm();
   const webcamRef = useRef<Webcam | null>(null);
