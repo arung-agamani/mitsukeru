@@ -10,11 +10,12 @@ import {
 } from 'material-react-table';
 import { toast } from 'react-toastify';
 import EditIcon from '@mui/icons-material/Edit';
-import InfoIcon from '@mui/icons-material/Info';
-import { Link } from 'react-router-dom';
+// import InfoIcon from '@mui/icons-material/Info';
+// import { Link } from 'react-router-dom';
 
 import { ItemData } from '../LostAndFound';
 import ItemDisplay from '../../components/ItemDisplay';
+import { ItemType } from './types';
 
 export default function FoundSearchPage() {
   const [items, setItems] = useState<ItemData[]>([]);
@@ -28,6 +29,8 @@ export default function FoundSearchPage() {
       {
         accessorKey: 'type',
         header: 'Type',
+        editVariant: 'select',
+        editSelectOptions: ItemType,
       },
       {
         accessorKey: 'description',
@@ -78,13 +81,13 @@ export default function FoundSearchPage() {
             <EditIcon />
           </IconButton>
         </Tooltip>
-        <Link to={`/lnf-lost-detail?id=${row.original.id}`}>
+        {/* <Link to={`/lnf-lost-detail?id=${row.original.id}`}>
           <Tooltip title="Details">
             <IconButton>
               <InfoIcon />
             </IconButton>
           </Tooltip>
-        </Link>
+        </Link> */}
       </Box>
     ),
     initialState: {

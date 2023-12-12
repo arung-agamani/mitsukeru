@@ -2,7 +2,7 @@ import { Grid, Typography, Box, Button } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { useForm } from 'react-hook-form';
-// import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import TextFieldInput from '../../components/Inputs/TextFieldInput';
 import SelectInput from '../../components/Inputs/SelectInput';
 import { ItemType, LostItemData } from './types';
@@ -24,18 +24,19 @@ const AddLostItemPage = () => {
     // toast.info('Submit button clicked');
   };
 
-  const saveData = () => {
+  const saveData = async () => {
     const payload = {
       ...itemData,
       imageData,
     };
 
-    window.electron.db.addItem('lost', payload);
+    await window.electron.db.addItem('lost', payload);
+    toast.success('Item added');
   };
   return (
     <Grid container spacing={2} padding="1rem 1rem">
       <Grid item xs={6}>
-        <Typography variant="h4">Tambah Item</Typography>
+        <Typography variant="h4">Add Lost Item</Typography>
         <form onSubmit={handleSubmit(submit)}>
           <Box display="flex" flexDirection="column" gap={2}>
             <TextFieldInput label="Item Name" id="name" control={control} />
@@ -65,9 +66,25 @@ const AddLostItemPage = () => {
               id="reporterContact"
               control={control}
             />
-            <Button variant="contained" type="submit" onClick={capture}>
-              Take Photo
-            </Button>
+            <Box display="flex" flexDirection="row" gap={2}>
+              <Button
+                variant="contained"
+                type="button"
+                onClick={capture}
+                fullWidth
+              >
+                Take Photo
+              </Button>
+              <Button
+                variant="contained"
+                type="submit"
+                color="secondary"
+                onClick={capture}
+                fullWidth
+              >
+                Take Data
+              </Button>
+            </Box>
             <Webcam
               audio={false}
               screenshotFormat="image/png"
@@ -89,7 +106,9 @@ const AddLostItemPage = () => {
               <Typography variant="h5">Item Name</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.name}</Typography>
+              <Typography variant="body1">
+                {itemData?.name || 'Not set'}
+              </Typography>
             </Grid>
           </Grid>
           <Grid container>
@@ -97,7 +116,9 @@ const AddLostItemPage = () => {
               <Typography variant="h5">Item Type</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.type}</Typography>
+              <Typography variant="body1">
+                {itemData?.type || 'Not set'}
+              </Typography>
             </Grid>
           </Grid>
           <Grid container>
@@ -105,7 +126,9 @@ const AddLostItemPage = () => {
               <Typography variant="h5">Description</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.description}</Typography>
+              <Typography variant="body1">
+                {itemData?.description || 'Not set'}
+              </Typography>
             </Grid>
           </Grid>
           <Grid container>
@@ -113,7 +136,9 @@ const AddLostItemPage = () => {
               <Typography variant="h5">Estimated Location of Lost</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.location}</Typography>
+              <Typography variant="body1">
+                {itemData?.location || 'Not set'}
+              </Typography>
             </Grid>
           </Grid>
           <Grid container>
@@ -121,7 +146,9 @@ const AddLostItemPage = () => {
               <Typography variant="h5">Reporter&apos;s Name</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.reporterName}</Typography>
+              <Typography variant="body1">
+                {itemData?.reporterName || 'Not set'}
+              </Typography>
             </Grid>
           </Grid>
           <Grid container>
@@ -130,15 +157,15 @@ const AddLostItemPage = () => {
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1">
-                {itemData?.reporterContact}
+                {itemData?.reporterContact || 'Not set'}
               </Typography>
             </Grid>
           </Grid>
-          <Typography>Item Picture (if any)</Typography>
-          {imageData && <img src={imageData} alt="Item" />}
           <Button variant="contained" onClick={() => saveData()}>
             Save Data
           </Button>
+          <Typography>Item Picture (if any)</Typography>
+          {imageData && <img src={imageData} alt="Item" />}
         </Box>
       </Grid>
     </Grid>

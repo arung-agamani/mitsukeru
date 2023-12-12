@@ -21,7 +21,7 @@ export interface LostItemData {
   updatedAt: Date;
 }
 
-export const emptyItemData: LostItemData = {
+export const emptyLostItemData: LostItemData = {
   id: '',
   name: '',
   type: '',

@@ -42,6 +42,22 @@ export const initDb = async () => {
   // await orm.schema.execute('DROP TABLE `config_entity`');
   await orm.schema.updateSchema();
   fs.ensureDirSync(path.resolve(app.getPath('documents'), app.getName()));
+
+  const configs = [
+    {
+      key: 'REMOTE_SERVER_HOST',
+      value: 'http://localhost:3000',
+    },
+  ];
+
+  configs.forEach(async (config) => {
+    const e = DI.em.fork();
+    const item = await e.findOne(ConfigEntity, { key: config.key });
+    if (!item) {
+      const ent = new ConfigEntity(config.key, config.value);
+      await e.persistAndFlush(ent);
+    }
+  });
 };
 
 interface LostItemData {
@@ -67,9 +83,11 @@ async function uploadImage(id: string, imageData: Buffer) {
   const imageBlob = new Blob([imageData]);
   formData.append('id', id);
   formData.append('image', imageBlob);
-
+  const em = DI.em.fork();
+  const host = await em.findOne(ConfigEntity, { key: 'REMOTE_SERVER_HOST' });
+  if (!host) return false;
   try {
-    await axios.post('http://localhost:3000/items/image', formData, {
+    await axios.post(`${host.value}/items/image`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -184,7 +202,11 @@ ipcMain.handle('image-get', async (event, type: ItemType, id: string) => {
   }
   // check remote
   try {
-    const { data } = await axios.get('http://localhost:3000/items/image', {
+    const em = DI.em.fork();
+    const host = await em.findOne(ConfigEntity, { key: 'REMOTE_SERVER_HOST' });
+    if (!host) return null;
+
+    const { data } = await axios.get(`${host.key}/items/image`, {
       params: {
         id,
       },
@@ -236,12 +258,14 @@ ipcMain.handle('export', async () => {
     lost: LostItem[];
     found: FoundItem[];
   };
+  const host = await em.findOne(ConfigEntity, { key: 'REMOTE_SERVER_HOST' });
+  // if (!host) return null;
   promiseArr.push(
-    axios.post('http://localhost:3000/items/data', {
+    axios.post(`${host?.value}/items/data`, {
       type: 'lostItems',
       data: allLostItems,
     }),
-    axios.post('http://localhost:3000/items/data', {
+    axios.post(`${host?.value}/items/data`, {
       type: 'foundItems',
       data: allFoundItems,
     }),
@@ -267,14 +291,17 @@ ipcMain.handle('export', async () => {
 });
 
 ipcMain.handle('import', async () => {
+  const em = DI.em.fork();
+  const host = await em.findOne(ConfigEntity, { key: 'REMOTE_SERVER_HOST' });
+  if (!host) return null;
   const promiseArr = [];
   promiseArr.push(
-    axios.get('http://localhost:3000/items/data', {
+    axios.get(`${host.value}/items/data`, {
       params: {
         type: 'lostItems',
       },
     }),
-    axios.get('http://localhost:3000/items/data', {
+    axios.get(`${host.value}/items/data`, {
       params: {
         type: 'foundItems',
       },
@@ -283,7 +310,6 @@ ipcMain.handle('import', async () => {
   try {
     const [{ data: lostItemData }, { data: foundItemData }] =
       await Promise.all(promiseArr);
-    const em = DI.em.fork();
     await em.upsertMany(LostItem, lostItemData);
     await em.upsertMany(FoundItem, foundItemData);
     return {

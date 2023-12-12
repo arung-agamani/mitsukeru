@@ -49,6 +49,9 @@ const electronHandler = {
     async getConfig() {
       return ipcRenderer.invoke('config-get');
     },
+    async setConfig(key: string, value: string) {
+      return ipcRenderer.invoke('config-set', key, value);
+    },
     on(channel: ItemType, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
         func(...args);

@@ -21,21 +21,22 @@ const AddFoundItemPage = () => {
 
   const submit = (data: any) => {
     setItemData(data);
-    toast.info('Submit button clicked');
+    // toast.info('Submit button clicked');
   };
 
-  const saveData = () => {
+  const saveData = async () => {
     const payload = {
       ...itemData,
       imageData,
     };
 
-    window.electron.db.addItem('found', payload);
+    await window.electron.db.addItem('found', payload);
+    toast.success('Item added');
   };
   return (
     <Grid container spacing={2} padding="1rem 1rem">
       <Grid item xs={6}>
-        <Typography variant="h4">Tambah Item</Typography>
+        <Typography variant="h4">Add Found Item</Typography>
         <form onSubmit={handleSubmit(submit)}>
           <Box display="flex" flexDirection="column" gap={2}>
             <TextFieldInput label="Item Name" id="name" control={control} />
@@ -79,7 +80,9 @@ const AddFoundItemPage = () => {
               <Typography variant="h5">Item Name</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.name}</Typography>
+              <Typography variant="body1">
+                {itemData?.name || 'Not set'}
+              </Typography>
             </Grid>
           </Grid>
           <Grid container>
@@ -87,7 +90,9 @@ const AddFoundItemPage = () => {
               <Typography variant="h5">Item Type</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.type}</Typography>
+              <Typography variant="body1">
+                {itemData?.type || 'Not set'}
+              </Typography>
             </Grid>
           </Grid>
           <Grid container>
@@ -95,7 +100,9 @@ const AddFoundItemPage = () => {
               <Typography variant="h5">Description</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.description}</Typography>
+              <Typography variant="body1">
+                {itemData?.description || 'Not set'}
+              </Typography>
             </Grid>
           </Grid>
           <Grid container>
@@ -103,14 +110,16 @@ const AddFoundItemPage = () => {
               <Typography variant="h5">Found item location</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.location}</Typography>
+              <Typography variant="body1">
+                {itemData?.location || 'Not set'}
+              </Typography>
             </Grid>
           </Grid>
-          <Typography>Item Picture</Typography>
-          {imageData && <img src={imageData} alt="Item" />}
           <Button variant="contained" onClick={() => saveData()}>
             Save Data
           </Button>
+          <Typography>Item Picture</Typography>
+          {imageData && <img src={imageData} alt="Item" />}
         </Box>
       </Grid>
     </Grid>

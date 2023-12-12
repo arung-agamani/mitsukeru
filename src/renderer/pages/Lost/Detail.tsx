@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Box, Divider, Typography } from '@mui/material';
-import { ItemData, emptyItemData } from '../LostAndFound';
-import ItemDisplay from '../../components/ItemDisplay';
+import LostItemDisplay from './LostItemDisplay';
+import { LostItemData, emptyLostItemData } from './types';
 
 const LostDetailPage: React.FC = () => {
   const [searchParams] = useSearchParams({ id: '' });
-  const [data, setData] = useState<ItemData>(emptyItemData);
+  const [data, setData] = useState<LostItemData>(emptyLostItemData);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     (async () => {
@@ -28,7 +28,7 @@ const LostDetailPage: React.FC = () => {
         <Typography variant="h3">Go back to search page</Typography>
       </Link>
       <Divider />
-      <ItemDisplay data={data} />
+      <LostItemDisplay data={data} />
     </Box>
   );
 };

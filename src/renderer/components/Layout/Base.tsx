@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import {
   Container,
   CssBaseline,
@@ -15,6 +15,9 @@ import {
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const drawerWidth = 240;
 
@@ -32,43 +35,44 @@ const DrawerIcons: DrawerItems[] = [
   },
   {
     text: 'Search Lost Item',
-    target: 'lnf-lost-search',
-    icon: <HomeIcon />,
+    target: '/lnf-lost-search',
+    icon: <SearchIcon />,
   },
   {
     text: 'Add Lost Item',
-    target: 'lnf-lost-add',
-    icon: <HomeIcon />,
+    target: '/lnf-lost-add',
+    icon: <AddIcon />,
   },
   {
     text: 'Search Found Item',
-    target: 'lnf-found-search',
-    icon: <HomeIcon />,
+    target: '/lnf-found-search',
+    icon: <SearchIcon />,
   },
   {
     text: 'Add Found Item',
-    target: 'lnf-found-add',
-    icon: <HomeIcon />,
+    target: '/lnf-found-add',
+    icon: <AddIcon />,
   },
   {
     text: 'Add Deposit Item',
-    target: 'deposit-add',
-    icon: <HomeIcon />,
+    target: '/deposit-add',
+    icon: <AddIcon />,
   },
   {
     text: 'Data Management',
-    target: 'data-management',
-    icon: <InfoIcon />,
+    target: '/data-management',
+    icon: <SettingsIcon />,
   },
   {
     text: 'About',
-    target: 'about',
+    target: '/about',
     icon: <InfoIcon />,
   },
 ];
 
 export default function BaseLayout() {
   const [open] = useState(true);
+  const location = useLocation();
   return (
     <Box sx={{ display: 'flex' }}>
       <Drawer
@@ -94,8 +98,8 @@ export default function BaseLayout() {
                 key={item.target}
                 style={{ textDecoration: 'none' }}
               >
-                <ListItem>
-                  <ListItemButton>
+                <ListItem disablePadding>
+                  <ListItemButton selected={location.pathname === item.target}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText>{item.text}</ListItemText>
                   </ListItemButton>

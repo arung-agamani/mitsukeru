@@ -12,15 +12,13 @@ import { toast } from 'react-toastify';
 import EditIcon from '@mui/icons-material/Edit';
 import InfoIcon from '@mui/icons-material/Info';
 import { Link } from 'react-router-dom';
-
-import { ItemData } from '../LostAndFound';
-import ItemDisplay from '../../components/ItemDisplay';
-import { ItemType } from './types';
+import { ItemType, LostItemData } from './types';
+import LostItemDisplay from './LostItemDisplay';
 
 export default function SearchPage() {
-  const [items, setItems] = useState<ItemData[]>([]);
+  const [items, setItems] = useState<LostItemData[]>([]);
 
-  const columns = useMemo<MRT_ColumnDef<ItemData>[]>(
+  const columns = useMemo<MRT_ColumnDef<LostItemData>[]>(
     () => [
       {
         accessorKey: 'name',
@@ -49,11 +47,23 @@ export default function SearchPage() {
         editSelectOptions: ['reported', 'claimed'],
         filterVariant: 'select',
       },
+      {
+        id: 'reporterName',
+        accessorKey: 'reporterName',
+        header: "Reporter's Name",
+        enableHiding: true,
+      },
+      {
+        id: 'reporterContact',
+        accessorKey: 'reporterContact',
+        header: "Reporter's Contact",
+        enableHiding: true,
+      },
     ],
     [],
   );
 
-  const tableSetting: MRT_TableInstance<ItemData> = useMaterialReactTable({
+  const tableSetting: MRT_TableInstance<LostItemData> = useMaterialReactTable({
     columns,
     data: items,
     enableGlobalFilter: true,
@@ -74,7 +84,7 @@ export default function SearchPage() {
       _table.setEditingRow(null);
     },
     renderDetailPanel: (prop) => {
-      return <ItemDisplay data={prop.row.original} />;
+      return <LostItemDisplay data={prop.row.original} />;
     },
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: 'flex', gap: '1rem' }}>
@@ -94,6 +104,10 @@ export default function SearchPage() {
     ),
     initialState: {
       showGlobalFilter: true,
+      columnVisibility: {
+        reporterName: false,
+        reporterContact: false,
+      },
     },
     positionGlobalFilter: 'left',
     muiSearchTextFieldProps: {
