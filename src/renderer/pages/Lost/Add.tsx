@@ -47,7 +47,7 @@ const AddLostItemPage = () => {
               control={control}
             />
             <TextFieldInput
-              label="Description"
+              label="Description and Contact"
               id="description"
               control={control}
             />
@@ -56,7 +56,7 @@ const AddLostItemPage = () => {
               id="location"
               control={control}
             />
-            <TextFieldInput
+            {/* <TextFieldInput
               label="Reporter's Name"
               id="reporterName"
               control={control}
@@ -65,16 +65,16 @@ const AddLostItemPage = () => {
               label="Reporter's Contact"
               id="reporterContact"
               control={control}
-            />
+            /> */}
             <Box display="flex" flexDirection="row" gap={2}>
-              <Button
+              {/* <Button
                 variant="contained"
                 type="button"
                 onClick={capture}
                 fullWidth
               >
                 Take Photo
-              </Button>
+              </Button> */}
               <Button
                 variant="contained"
                 type="submit"

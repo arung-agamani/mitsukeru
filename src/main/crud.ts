@@ -5,6 +5,7 @@ import { EntityManager } from '@mikro-orm/sqlite';
 import LostItem, { LostItemStatus } from './Entities/LostItem';
 import FoundItem, { FoundItemStatus } from './Entities/FoundItem';
 import { ItemType } from './preload';
+import DepositItem, { DepositItemStatus } from './Entities/DepositItem';
 
 interface BaseItemAttributes {
   name: string;
@@ -21,6 +22,11 @@ interface FoundItemUpdate extends BaseItemAttributes {
   status: FoundItemStatus;
 }
 
+interface DepositItemUpdate extends BaseItemAttributes {
+  counter: string;
+  status: DepositItemStatus;
+}
+
 export async function getItem(
   event: IpcMainInvokeEvent,
   _em: EntityManager,
@@ -28,11 +34,27 @@ export async function getItem(
   id: string,
 ) {
   let entity = null;
-  if (type === 'lost') {
-    entity = LostItem;
-  }
-  if (type === 'found') {
-    entity = FoundItem;
+  // if (type === 'lost') {
+  //   entity = LostItem;
+  // }
+  // if (type === 'found') {
+  //   entity = FoundItem;
+  // }
+  // if (type === 'deposit') {
+  //   entity = DepositItem;
+  // }
+  switch (type) {
+    case 'lost':
+      entity = LostItem;
+      break;
+    case 'found':
+      entity = FoundItem;
+      break;
+    case 'deposit':
+      entity = DepositItem;
+      break;
+    default:
+      entity = null;
   }
 
   if (!entity) return 0;
@@ -64,6 +86,10 @@ export async function editItem(
     entity = FoundItem;
     val = values as FoundItemUpdate;
   }
+  if (type === 'deposit') {
+    entity = DepositItem;
+    val = values as DepositItemUpdate;
+  }
 
   if (!entity) return 0;
   try {
@@ -72,7 +98,6 @@ export async function editItem(
     wrap(item).assign(
       {
         ...val,
-        status: val?.status,
         updatedAt: new Date(),
       },
       { em },

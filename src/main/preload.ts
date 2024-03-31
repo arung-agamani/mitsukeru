@@ -29,6 +29,7 @@ const electronHandler = {
       return ipcRenderer.invoke('db-get', type, id);
     },
     async addItem(type: ItemType, values: any) {
+      console.log(values);
       ipcRenderer.send('db', type, values);
     },
     async editItem(type: ItemType, id: string, values: any) {

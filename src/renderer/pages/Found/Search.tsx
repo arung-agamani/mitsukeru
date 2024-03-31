@@ -14,8 +14,8 @@ import EditIcon from '@mui/icons-material/Edit';
 // import { Link } from 'react-router-dom';
 
 import { ItemData } from '../LostAndFound';
-import ItemDisplay from '../../components/ItemDisplay';
 import { ItemType } from './types';
+import FoundItemDisplay from './FoundItemDisplay';
 
 export default function FoundSearchPage() {
   const [items, setItems] = useState<ItemData[]>([]);
@@ -72,7 +72,7 @@ export default function FoundSearchPage() {
       _table.setEditingRow(null);
     },
     renderDetailPanel: (prop) => {
-      return <ItemDisplay data={prop.row.original} />;
+      return <FoundItemDisplay data={prop.row.original} />;
     },
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: 'flex', gap: '1rem' }}>

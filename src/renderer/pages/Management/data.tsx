@@ -1,13 +1,5 @@
 /* eslint-disable camelcase */
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import { Button, Divider, Typography } from '@mui/material';
 import {
   MRT_ColumnDef,
   MaterialReactTable,
@@ -58,7 +50,7 @@ const DataManagementPage = () => {
   const table = useMaterialReactTable({
     columns,
     data: config,
-    enableEditing: true,
+    enableEditing: (row) => row.original.key !== 'EXPORT_DATA_PATH',
     editDisplayMode: 'modal',
     onEditingRowSave: async ({ table: _table, values }) => {
       const res = await window.electron.db.setConfig(values.key, values.value);
@@ -69,15 +61,15 @@ const DataManagementPage = () => {
       toast.success(`Config ${values.key} has been updated`);
       _table.setEditingRow(null);
     },
-    renderRowActions: ({ row, table: _table }) => (
-      <Box sx={{ display: 'flex', gap: '1rem' }}>
-        <Tooltip title="Edit">
-          <IconButton onClick={() => _table.setEditingRow(row)}>
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    // renderRowActions: ({ row, table: _table }) => (
+    //   <Box sx={{ display: 'flex', gap: '1rem' }}>
+    //     <Tooltip title="Edit">
+    //       <IconButton onClick={() => _table.setEditingRow(row)}>
+    //         <EditIcon />
+    //       </IconButton>
+    //     </Tooltip>
+    //   </Box>
+    // ),
   });
 
   useEffect(() => {
@@ -102,7 +94,9 @@ const DataManagementPage = () => {
           Export
         </Button>
         <Typography variant="h5">Generate Report</Typography>
-        <Button variant="contained">Generate</Button>
+        <Button variant="contained" disabled>
+          Generate
+        </Button>
       </div>
       <Typography variant="h4">Saved configurations</Typography>
       <MaterialReactTable table={table} />

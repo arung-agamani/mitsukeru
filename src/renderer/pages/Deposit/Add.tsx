@@ -1,14 +1,22 @@
+/* eslint-disable camelcase */
 import { Grid, Typography, Box, Button } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 // import Webcam from 'react-webcam';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import {
+  MRT_ColumnDef,
+  MRT_TableInstance,
+  MaterialReactTable,
+  useMaterialReactTable,
+} from 'material-react-table';
 import TextFieldInput from '../../components/Inputs/TextFieldInput';
 import SelectInput from '../../components/Inputs/SelectInput';
 import { DepositItemData, ItemType } from './types';
 
 const AddDepositItemPage = () => {
   const [itemData, setItemData] = useState<DepositItemData | null>(null);
+  const [fullItemData, setFullItemData] = useState<DepositItemData[]>([]);
   // const [imageData, setImageData] = useState<string>('');
   const { handleSubmit, control } = useForm();
   // const webcamRef = useRef<Webcam | null>(null);
@@ -18,23 +26,71 @@ const AddDepositItemPage = () => {
   //   const imageSrc = webcamRef.current.getScreenshot();
   //   if (imageSrc) setImageData(imageSrc);
   // }, [webcamRef]);
-  const saveData = () => {
-    const payload = {
-      ...itemData,
-    };
+  // const saveData = async () => {
+  //   const payload = {
+  //     ...itemData,
+  //   };
+  //   await window.electron.db.addItem('deposit', payload);
+  // };
 
-    window.electron.db.addItem('deposit', payload);
+  const columns = useMemo<MRT_ColumnDef<DepositItemData>[]>(
+    () => [
+      {
+        id: 'id',
+        accessorKey: 'id',
+        header: 'No',
+      },
+      {
+        id: 'name',
+        accessorKey: 'name',
+        header: 'Name',
+      },
+      {
+        id: 'type',
+        accessorKey: 'type',
+        header: 'Type',
+      },
+      {
+        id: 'counter',
+        accessorKey: 'counter',
+        header: 'Counter',
+      },
+      {
+        id: 'status',
+        accessorKey: 'status',
+        header: 'Status',
+      },
+    ],
+    [],
+  );
+
+  const tableSetting: MRT_TableInstance<DepositItemData> =
+    useMaterialReactTable({
+      columns,
+      data: fullItemData,
+    });
+
+  const fetchDepositItems = async () => {
+    const depositItems = await window.electron.db.listItem('deposit');
+    setFullItemData(depositItems);
   };
 
-  const submit = (data: any) => {
+  const submit = async (data: any) => {
     setItemData(data);
+    await window.electron.db.addItem('deposit', data);
     toast.info('Submit button clicked');
-    saveData();
+    // saveData();
+    fetchDepositItems();
   };
+
+  useEffect(() => {
+    fetchDepositItems();
+  }, []);
+
   // TODO : Fix the form fields
   return (
     <Grid container spacing={2} padding="1rem 1rem">
-      <Grid item xs={6}>
+      <Grid item xs={4}>
         <Typography variant="h4">Tambah Item</Typography>
         <form onSubmit={handleSubmit(submit)}>
           <Box display="flex" flexDirection="column" gap={2}>
@@ -50,9 +106,15 @@ const AddDepositItemPage = () => {
               id="description"
               control={control}
             />
+            <TextFieldInput label="Counter" id="counter" control={control} />
             <TextFieldInput
-              label="Found Location"
-              id="location"
+              label="Owner Name"
+              id="ownerName"
+              control={control}
+            />
+            <TextFieldInput
+              label="Owner Contact"
+              id="ownerContact"
               control={control}
             />
             <Button variant="contained" type="submit">
@@ -71,48 +133,12 @@ const AddDepositItemPage = () => {
           </Box>
         </form>
       </Grid>
-      {/* <Grid item xs={6}>
-        <Typography variant="h4">Preview Item</Typography>
-        <Box display="flex" flexDirection="column" gap={2}>
-          <Grid container>
-            <Grid item xs={6}>
-              <Typography variant="h5">Item Name</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.name}</Typography>
-            </Grid>
-          </Grid>
-          <Grid container>
-            <Grid item xs={6}>
-              <Typography variant="h5">Item Type</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.type}</Typography>
-            </Grid>
-          </Grid>
-          <Grid container>
-            <Grid item xs={6}>
-              <Typography variant="h5">Description</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.description}</Typography>
-            </Grid>
-          </Grid>
-          <Grid container>
-            <Grid item xs={6}>
-              <Typography variant="h5">Found item location</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1">{itemData?.location}</Typography>
-            </Grid>
-          </Grid>
-          <Typography>Item Picture</Typography>
-          {imageData && <img src={imageData} alt="Item" />}
-          <Button variant="contained" onClick={() => saveData()}>
-            Save Data
-          </Button>
+      <Grid item xs={8}>
+        <Typography variant="h4">Deposit Item</Typography>
+        <Box>
+          <MaterialReactTable table={tableSetting} />
         </Box>
-      </Grid> */}
+      </Grid>
     </Grid>
   );
 };

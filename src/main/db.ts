@@ -76,7 +76,16 @@ interface FoundItemData {
   imageData: string;
 }
 
-type ItemType = 'lost' | 'found' | 'inventory';
+interface DepositItemData {
+  name: string;
+  type: string;
+  description: string;
+  counter: string;
+  ownerName: string;
+  ownerContact: string;
+}
+
+type ItemType = 'lost' | 'found' | 'deposit';
 
 async function uploadImage(id: string, imageData: Buffer) {
   const formData = new FormData();
@@ -149,6 +158,38 @@ ipcMain.on('db', async (event, type: ItemType, value) => {
     );
     await uploadImage(foundItem.id, buf);
     event.reply('found', 'Item successfully added to found item bin');
+  } else if (type === 'deposit') {
+    console.log(value);
+    const {
+      name,
+      type: itemType,
+      description,
+      counter,
+      ownerName,
+      ownerContact,
+    } = value as DepositItemData;
+    const depositItem = new DepositItem(
+      name,
+      itemType,
+      description,
+      counter,
+      ownerName,
+      ownerContact,
+    );
+    const em = DI.em.fork();
+    await em.persistAndFlush(depositItem);
+    // const imageb64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
+    // const buf = Buffer.from(imageb64Data, 'base64');
+    // fs.writeFile(
+    //   path.resolve(
+    //     app.getPath('documents'),
+    //     app.getName(),
+    //     `${foundItem.id}.png`,
+    //   ),
+    //   buf,
+    // );
+    // await uploadImage(foundItem.id, buf);
+    event.reply('found', 'Item successfully added to found item bin');
   }
 });
 
@@ -190,6 +231,11 @@ ipcMain.handle('db-search', async (event, type: ItemType) => {
       },
     );
     return foundItems;
+  }
+  if (type === 'deposit') {
+    const em = DI.em.fork();
+    const depositItems = await em.find(DepositItem, {});
+    return depositItems;
   }
   return [];
 });

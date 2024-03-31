@@ -17,7 +17,16 @@ const AsyncImage: React.FC<Props> = ({ id }) => {
 
   if (!id) return <p>Invalid id given: Received {id}</p>;
   if (!imageData) return <p>Loading...</p>;
-  return <img src={`data:image/png;base64,${imageData}`} alt={`${id}`} />;
+  return (
+    <img
+      src={`data:image/png;base64,${imageData}`}
+      alt={`${id}`}
+      style={{
+        width: '700px',
+        display: 'block',
+      }}
+    />
+  );
 };
 
 export default AsyncImage;

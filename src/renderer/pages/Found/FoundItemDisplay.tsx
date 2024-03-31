@@ -10,41 +10,39 @@ const FoundItemDisplay: React.FC<Props> = ({ data }) => {
   return (
     <Container
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
         marginTop: '2rem',
         marginBottom: '2rem',
       }}
     >
-      <Typography variant="h3">Item Name: {data.name}</Typography>
-      <Typography variant="subtitle1">ID: {data.id}</Typography>
+      <Typography variant="h3">Item: {data.name}</Typography>
+      {/* <Typography variant="subtitle1">ID: {data.id}</Typography> */}
       <Divider />
       <table>
         <tr>
           <td>
-            <Typography variant="h5">Description</Typography>
+            <Typography variant="h5">Deskripsi: </Typography>
           </td>
           <td>
             <Typography variant="h5">{data.description}</Typography>
           </td>
         </tr>
-        <tr>
+        {/* <tr>
           <td>
             <Typography variant="h5">Location</Typography>
           </td>
           <td>
             <Typography variant="h5">{data.location}</Typography>
           </td>
-        </tr>
-        <tr>
+        </tr> */}
+        {/* <tr>
           <td>
             <Typography variant="h5">Status</Typography>
           </td>
           <td>
             <Typography variant="h5">{data.status || 'Unknown'}</Typography>
           </td>
-        </tr>
-        <tr>
+        </tr> */}
+        {/* <tr>
           <td>
             <Typography variant="h5">Last Updated</Typography>
           </td>
@@ -53,10 +51,10 @@ const FoundItemDisplay: React.FC<Props> = ({ data }) => {
               {data.updatedAt?.toLocaleString() || 'No data'}
             </Typography>
           </td>
-        </tr>
+        </tr> */}
       </table>
       <AsyncImage id={data.id || ''} />
-      <Typography variant="caption">Image for item {data.id}</Typography>
+      {/* <Typography variant="caption">Image for item {data.id}</Typography> */}
     </Container>
   );
 };
